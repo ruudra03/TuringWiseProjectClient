@@ -11,14 +11,14 @@ const Post = ({ postId }) => {
     const navigate = useNavigate()
 
     if (post) {
-        const handleEdit = () => navigate(`dash/posts/${postId}`)
+        const handleEdit = () => navigate(`/dash/posts/${postId}`)
 
         const created = new Date(post.createdAt).toLocaleString('en-UK', { day: 'numeric', month: 'long' })
         const updated = new Date(post.updatedAt).toLocaleString('en-UK', { day: 'numeric', month: 'long' })
 
         const postTagsString = post.tags.toString().replaceAll(',', ', ')
 
-        const postIsEdited = post.edited ? 'Edited' : 'n/a'
+        const postIsEdited = post.edited ? 'Yes' : 'n/a'
 
         return (
             <tr className='table__row post'>

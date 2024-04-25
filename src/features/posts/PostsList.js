@@ -2,6 +2,7 @@ import { useGetPostsQuery } from './postsApiSlice'
 
 import Post from './Post'
 
+// TODO: add sorting based on date created
 const PostsList = () => {
     const {
         data: posts,
@@ -9,7 +10,11 @@ const PostsList = () => {
         isSuccess,
         isError,
         error
-    } = useGetPostsQuery()
+    } = useGetPostsQuery(undefined, {
+        pollingInterval: 15000, // Equals to 15secs
+        refetchOnFocus: true,
+        refetchOnMountOrArgChange: true
+    })
 
     let content
 

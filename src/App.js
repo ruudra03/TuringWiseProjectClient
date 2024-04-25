@@ -7,6 +7,11 @@ import DashLayout from './components/dash/DashLayout'
 import Welcome from './features/auth/Welcome'
 import PostsList from './features/posts/PostsList'
 import UsersList from './features/users/UsersList'
+import NewUserForm from './features/users/NewUserForm'
+import EditUser from './features/users/EditUser'
+import NewPost from './features/posts/NewPost'
+import EditPost from './features/posts/EditPost'
+import Prefetch from './features/auth/Prefetch'
 
 function App() {
   return (
@@ -15,21 +20,27 @@ function App() {
         <Route index element={<Public />} />
         <Route path='login' element={<Login />} />
 
-        {/* Protected Routes */}
-        {/* TODO: protect these routes */}
-        <Route path='dash' element={<DashLayout />}>
-          <Route index element={<Welcome />} />
+        <Route element={<Prefetch />}>
+          {/* Protected Routes */}
+          {/* TODO: protect these routes */}
+          <Route path='dash' element={<DashLayout />}>
+            <Route index element={<Welcome />} />
 
-          <Route path='posts'>
-            <Route index element={<PostsList />} />
+            <Route path='users'>
+              <Route index element={<UsersList />} />
+              <Route path=':id' element={<EditUser />} />
+              <Route path='new' element={<NewUserForm />} />
+            </Route>
+
+            <Route path='posts'>
+              <Route index element={<PostsList />} />
+              <Route path=':id' element={<EditPost />} />
+              <Route path='new' element={<NewPost />} />
+            </Route>
+
           </Route>
-
-          <Route path='users'>
-            <Route index element={<UsersList />} />
-          </Route>
-
+          {/* End Dash */}
         </Route>
-        {/* End Dash */}
 
       </Route>
     </Routes>

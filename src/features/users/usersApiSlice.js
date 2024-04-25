@@ -8,14 +8,12 @@ const initialState = usersAdapter.getInitialState()
 
 export const usersApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
-        // Get all users API endpoint
+        // Get all users
         getUsers: builder.query({
             query: () => '/users', // Base Query is already provided inside apiSlice
             validateStatus: (response, result) => { // Check response status
                 return response.status === 200 && !result.isError
             },
-            // TODO: change keepUnusedDataFor value (which is in seconds) after deployment
-            keepUnusedDataFor: 5, // 5secs for development and usually 60secs for deployment
             transformResponse: responseData => { // Due to usage of _id instead of id property in MongoDB responses
                 const loadedUsers = responseData.map(user => {
                     user.id = user._id // Map _id to id property
@@ -32,13 +30,53 @@ export const usersApiSlice = apiSlice.injectEndpoints({
                     ]
                 } else return [{ type: 'User', id: 'LIST' }] // Fail Safe
             }
+        }),
+        // Create New User
+        addNewUser: builder.mutation({
+            query: initialUserData => ({
+                url: '/users',
+                method: 'POST',
+                body: {
+                    ...initialUserData
+                }
+            }),
+            invalidatesTags: [
+                { type: 'User', id: 'LIST' }
+            ]
+        }),
+        // Update User
+        updateUser: builder.mutation({
+            query: initialUserData => ({
+                url: '/users',
+                method: 'PATCH',
+                body: {
+                    ...initialUserData
+                }
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: 'User', id: arg.id }
+            ]
+        }),
+        // Delete User
+        deleteUser: builder.mutation({
+            query: ({ id }) => ({
+                url: '/users',
+                method: 'DELETE',
+                body: { id }
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: 'User', id: arg.id }
+            ]
         })
     })
 })
 
 export const {
-    // Create hooks (add use in the beginning and Query at the end)
-    useGetUsersQuery
+    // Create hooks (add use in the beginning and Query/Mutation at the end)
+    useGetUsersQuery,
+    useAddNewUserMutation,
+    useUpdateUserMutation,
+    useDeleteUserMutation
 } = usersApiSlice
 
 // Selectors

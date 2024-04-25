@@ -2,6 +2,7 @@ import { createSelector, createEntityAdapter } from '@reduxjs/toolkit'
 
 import { apiSlice } from '../../app/api/apiSlice'
 
+// TODO: add post sorting inside createEntityAdapter
 const postsAdapter = createEntityAdapter({})
 
 const initialState = postsAdapter.getInitialState()
@@ -14,8 +15,6 @@ export const postsApiSlice = apiSlice.injectEndpoints({
             validateStatus: (response, result) => { // Check response status
                 return response.status === 200 && !result.isError
             },
-            // TODO: change keepUnusedDataFor value (which is in seconds) after deployment
-            keepUnusedDataFor: 5, // 5secs for development and usually 60secs for deployment
             transformResponse: responseData => { // Due to usage of _id instead of id property in MongoDB responses
                 const loadedPosts = responseData.map(post => {
                     post.id = post._id // Map _id to id property
@@ -32,13 +31,53 @@ export const postsApiSlice = apiSlice.injectEndpoints({
                     ]
                 } else return [{ type: 'Post', id: 'LIST' }] // Fail Safe
             }
+        }),
+        // Create New Post
+        addNewPost: builder.mutation({
+            query: initialPostData => ({
+                url: '/posts',
+                method: 'POST',
+                body: {
+                    ...initialPostData
+                }
+            }),
+            invalidatesTags: [
+                { type: 'Post', id: 'LIST' }
+            ]
+        }),
+        // Update Post
+        updatePost: builder.mutation({
+            query: initialPostData => ({
+                url: '/posts',
+                method: 'PATCH',
+                body: {
+                    ...initialPostData
+                }
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: 'Post', id: arg.id }
+            ]
+        }),
+        // Delete Post
+        deletePost: builder.mutation({
+            query: ({ id }) => ({
+                url: '/posts',
+                method: 'DELETE',
+                body: { id }
+            }),
+            invalidatesTags: (result, error, arg) => [
+                { type: 'Post', id: arg.id }
+            ]
         })
     })
 })
 
 export const {
-    // Create hooks (add use in the beginning and Query at the end)
-    useGetPostsQuery
+    // Create hooks (add use in the beginning and Query/Mutation at the end)
+    useGetPostsQuery,
+    useAddNewPostMutation,
+    useUpdatePostMutation,
+    useDeletePostMutation
 } = postsApiSlice
 
 // Selectors

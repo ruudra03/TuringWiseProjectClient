@@ -8,8 +8,11 @@ const Welcome = () => {
         <section className='welcome'>
             <p>{today}</p>
             <h1>Welcome!</h1>
-            <p><Link to='/dash/posts'>View Posts</Link></p>
             <p><Link to='/dash/users'>View Users</Link></p>
+            <p><Link to='/dash/users/new'>Add New User</Link></p>
+
+            <p><Link to='/dash/posts'>View Posts</Link></p>
+            <p><Link to='/dash/posts/new'>Add New Post</Link></p>
         </section>
     )
 

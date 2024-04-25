@@ -11,7 +11,7 @@ const User = ({ userId }) => {
     const navigate = useNavigate()
 
     if (user) {
-        const handleEdit = () => navigate(`dash/users/${userId}`)
+        const handleEdit = () => navigate(`/dash/users/${userId}`)
 
         const userRolesString = user.roles.toString().replaceAll(',', ', ')
 
