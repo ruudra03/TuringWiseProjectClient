@@ -6,7 +6,9 @@ import NewPostForm from '../posts/NewPostForm'
 const NewPost = () => {
     const users = useSelector(selectAllUsers)
 
-    const content = users ? <NewPostForm users={users} /> : <p>Loading...</p>
+    if (!users?.length) return <p>Feature currently unavailable</p>
+
+    const content = <NewPostForm users={users} />
 
     return content
 }

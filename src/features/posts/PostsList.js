@@ -10,7 +10,7 @@ const PostsList = () => {
         isSuccess,
         isError,
         error
-    } = useGetPostsQuery(undefined, {
+    } = useGetPostsQuery('postsList', {
         pollingInterval: 15000, // Equals to 15secs
         refetchOnFocus: true,
         refetchOnMountOrArgChange: true
