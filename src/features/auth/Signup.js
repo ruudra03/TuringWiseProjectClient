@@ -1,31 +1,44 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave } from '@fortawesome/free-solid-svg-icons'
+import { faUserPlus } from '@fortawesome/free-solid-svg-icons'
+import PulseLoader from 'react-spinners/PulseLoader'
+import { useDispatch } from 'react-redux'
 
-import { useAddNewUserMutation } from './usersApiSlice'
-import { ROLES } from '../../config/roles'
+import { setCredentials } from './authSlice'
+import { useLoginMutation } from './authApiSlice'
+import usePersist from '../../hooks/usePersist'
+import { useSignupUserMutation } from '../users/usersApiSlice'
 
 const NAME_REGEX = /^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/
 const USERNAME_REGEX = /^[a-z0-9_]{5,16}$/
 const EMAIL_REGEX = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
-const PWD_REGEX = /^(?=.*?[0-9])(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^0-9A-Za-z]).{8,32}$/ // Strong Password
+const TEMP_DEV_PWD_REGEX = /^[a-z0-9_]{5,16}$/
+// TODO: use the PWD_REGEX after development
+// const PWD_REGEX = /^(?=.*?[0-9])(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[^0-9A-Za-z]).{8,32}$/ // Strong Password
 
-const NewUserForm = () => {
-    const [addNewUser, { // Provides addNewUser function
+const Signup = () => {
+    const [signupUser, {
         isLoading,
         isSuccess,
         isError,
         error
-    }] = useAddNewUserMutation()
+    }] = useSignupUserMutation()
+
+    const [login, {
+        isLoading: isLoginLoading
+    }] = useLoginMutation()
 
     const navigate = useNavigate()
+    const dispatch = useDispatch()
 
     const [name, setName] = useState('')
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [roles, setRoles] = useState(['User'])
+    const [errMsg, setErrMsg] = useState('')
+
+    const [persist, setPersist] = usePersist()
 
     const [validName, setValidName] = useState(false)
     const [validUsername, setValidUsername] = useState(false)
@@ -45,7 +58,7 @@ const NewUserForm = () => {
     }, [email])
 
     useEffect(() => {
-        setValidPassword(PWD_REGEX.test(password))
+        setValidPassword(TEMP_DEV_PWD_REGEX.test(password))
     }, [password])
 
     useEffect(() => {
@@ -54,8 +67,6 @@ const NewUserForm = () => {
             setUsername('')
             setEmail('')
             setPassword('')
-            setRoles([])
-            navigate('/dash/users')
         }
     }, [isSuccess, navigate])
 
@@ -63,55 +74,69 @@ const NewUserForm = () => {
     const onUsernameChanged = e => setUsername(e.target.value)
     const onEmailChanged = e => setEmail(e.target.value)
     const onPasswordChanged = e => setPassword(e.target.value)
-    const onRolesChanged = e => {
-        const values = Array.from(
-            e.target.selectedOptions, // HTML Collection
-            (option) => option.value
-        )
-        setRoles(values)
-    }
 
-    const canSave = [validName, validUsername, validEmail, validPassword, roles.length].every(Boolean) && !isLoading
+    const handleToggle = () => setPersist(prev => !prev)
 
-    const onSaveUserClicked = async (e) => {
+    const canSave = [validName, validUsername, validEmail, validPassword].every(Boolean) && !isLoading
+
+    const onSignupClicked = async (e) => {
         e.preventDefault()
         if (canSave) {
-            await addNewUser({ name, username, email, password, roles })
+            try {
+                await signupUser({ name, username, email, password })
+
+                const { accessToken } = await login({ username, password }).unwrap()
+                dispatch(setCredentials({ accessToken }))
+
+                navigate('/dash')
+            } catch (err) {
+                if (!err.status) {
+                    setErrMsg('No Server Response')
+                } else if (err.status === 400) {
+                    setErrMsg('Missing Username or Password')
+                } else if (err.status === 401) {
+                    setErrMsg('Unauthorized')
+                } else {
+                    setErrMsg(err.data?.message)
+                }
+            }
         }
     }
-
-    const options = Object.values(ROLES).map(role => {
-        return (
-            <option
-                key={role}
-                value={role}
-            >
-                {role}
-            </option>
-        )
-    })
 
     const errClass = isError ? 'errmsg' : 'offscreen'
     const validNameClass = !validName ? 'form__input--incomplete' : ''
     const validUsernameClass = !validUsername ? 'form__input--incomplete' : ''
     const validEmailClass = !validEmail ? 'form__input--incomplete' : ''
     const validPasswordClass = !validPassword ? 'form__input--incomplete' : ''
-    const validRolesClass = !Boolean(roles.length) ? 'form__input--incomplete' : ''
+
+    if (isLoginLoading) return <PulseLoader color={'#FFF'} />
 
     const content = (
         <>
             <p className={errClass}>{error?.data?.message}</p>
-            <form className='form' onSubmit={onSaveUserClicked}>
+            <p className={errClass}>{errMsg}</p>
+            <form className='form' onSubmit={onSignupClicked}>
                 <div className='form__title-row'>
-                    <h2>New User</h2>
+                    <h2>Sign Up</h2>
                     <div className='form__action-buttons'>
                         <button
                             className='icon-button'
-                            title='Save'
+                            title='Sign Up'
                             disabled={!canSave}
                         >
-                            <FontAwesomeIcon icon={faSave} />
+                            <FontAwesomeIcon icon={faUserPlus} />
+                            Sign up
                         </button>
+                        <label htmlFor='persist' className='form__persist'>
+                            <input
+                                type='checkbox'
+                                className='form__checkbox'
+                                id='persist'
+                                onChange={handleToggle}
+                                checked={persist}
+                            />
+                            Trust this device
+                        </label>
                     </div>
                 </div>
 
@@ -164,21 +189,6 @@ const NewUserForm = () => {
                     value={password}
                     onChange={onPasswordChanged}
                 />
-
-                <label className='form__label' htmlFor='roles'>
-                    ROLES:
-                </label>
-                <select
-                    id='roles'
-                    name='roles'
-                    className={`form__select ${validRolesClass}`}
-                    multiple={true}
-                    size='4'
-                    value={roles}
-                    onChange={onRolesChanged}
-                >
-                    {options}
-                </select>
             </form>
         </>
     )
@@ -186,4 +196,4 @@ const NewUserForm = () => {
     return content
 }
 
-export default NewUserForm
+export default Signup

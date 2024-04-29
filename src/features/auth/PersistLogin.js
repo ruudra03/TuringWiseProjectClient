@@ -26,7 +26,7 @@ const PersistLogin = () => {
 
     // NOTE: in ReactStrict mode every component mounts (i.e., suscribe), unmounts (i.e., unsuscribe) and then remounts
     // hence useEffect() runs twice in development using Strict mode
-    // and we need thsi useEffect() to only run once
+    // and we need this useEffect() to only run once
     useEffect(() => {
         if (effectRan.current === true || process.env.NODE_ENV !== 'development') { // ReactStrict mode
             const verifyRefreshToken = async () => {

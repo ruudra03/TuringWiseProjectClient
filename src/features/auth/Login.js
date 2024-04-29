@@ -1,8 +1,8 @@
 import { useRef, useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import PulseLoader from 'react-spinners/PulseLoader'
-
 import { useDispatch } from 'react-redux'
+
 import { setCredentials } from './authSlice'
 import { useLoginMutation } from './authApiSlice'
 import usePersist from '../../hooks/usePersist'
@@ -53,10 +53,10 @@ const Login = () => {
                 setErrMsg(err.data?.message)
             }
             // TODO: solve this error here (errRef.current.focus() is null)
-            //console.log(errRef)
-            //console.log(errRef.current)
-            //console.log(errRef.current.focus())
-            //errRef.current.focus()
+            // console.log(errRef)
+            // console.log(errRef.current)
+            // console.log(errRef.current.focus())
+            // errRef.current.focus()
         }
     }
 
