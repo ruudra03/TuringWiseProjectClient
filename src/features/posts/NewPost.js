@@ -1,12 +1,16 @@
-import { useSelector } from 'react-redux'
+import PulseLoader from 'react-spinners/PulseLoader'
 
-import { selectAllUsers } from '../users/usersApiSlice'
+import { useGetUsersQuery } from '../users/usersApiSlice'
 import NewPostForm from '../posts/NewPostForm'
 
 const NewPost = () => {
-    const users = useSelector(selectAllUsers)
+    const { users } = useGetUsersQuery('usersList', {
+        selectFromResult: ({ data }) => ({
+            users: data?.ids.map(id => data?.entities[id])
+        })
+    })
 
-    if (!users?.length) return <p>Feature currently unavailable</p>
+    if (!users?.length) return <PulseLoader color={'#FFF'} />
 
     const content = <NewPostForm users={users} />
 

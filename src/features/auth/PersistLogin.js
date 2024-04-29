@@ -1,6 +1,7 @@
 import { Outlet, Link } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
+import PulseLoader from 'react-spinners/PulseLoader'
 
 import { useRefreshMutation } from './authApiSlice'
 import usePersist from '../../hooks/usePersist'
@@ -56,12 +57,12 @@ const PersistLogin = () => {
         content = <Outlet />
     } else if (isLoading) { // No token set yet (persist: yes, token: no)
         console.log('Loading login access');
-        content = <p>Loading...</p>
+        content = <PulseLoader color={'#FFF'} />
     } else if (isError) { // Failed to get the token (persist: yes, token: no)
         console.log('Failed to get login access')
         content = (
             <p className='errmsg'>
-                {error.data?.message}
+                {`${error?.data?.message} - `}
                 <Link to='/login'>Please login again</Link>
             </p>
         )

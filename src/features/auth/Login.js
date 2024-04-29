@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import PulseLoader from 'react-spinners/PulseLoader'
 
 import { useDispatch } from 'react-redux'
 import { setCredentials } from './authSlice'
@@ -28,7 +29,7 @@ const Login = () => {
     }, [])
 
     useEffect(() => {
-        setErrMsg('');
+        setErrMsg('')
     }, [username, password])
 
 
@@ -43,15 +44,19 @@ const Login = () => {
             navigate('/dash')
         } catch (err) {
             if (!err.status) {
-                setErrMsg('No Server Response');
+                setErrMsg('No Server Response')
             } else if (err.status === 400) {
-                setErrMsg('Missing Username or Password');
+                setErrMsg('Missing Username or Password')
             } else if (err.status === 401) {
-                setErrMsg('Unauthorized');
+                setErrMsg('Unauthorized')
             } else {
-                setErrMsg(err.data?.message);
+                setErrMsg(err.data?.message)
             }
-            errRef.current.focus();
+            // TODO: solve this error here (errRef.current.focus() is null)
+            //console.log(errRef)
+            //console.log(errRef.current)
+            //console.log(errRef.current.focus())
+            //errRef.current.focus()
         }
     }
 
@@ -61,7 +66,7 @@ const Login = () => {
 
     const errClass = errMsg ? 'errmsg' : 'offscreen'
 
-    if (isLoading) return <p>Loading...</p>
+    if (isLoading) return <PulseLoader color={'#FFF'} />
 
     const content = (
         <section className='public'>

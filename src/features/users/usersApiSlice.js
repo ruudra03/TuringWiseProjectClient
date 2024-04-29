@@ -10,10 +10,12 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         // Get all users
         getUsers: builder.query({
-            query: () => '/users', // Base Query is already provided inside apiSlice
-            validateStatus: (response, result) => { // Check response status
-                return response.status === 200 && !result.isError
-            },
+            query: () => ({
+                url: '/users', // Base Query is already provided inside apiSlice
+                validateStatus: (response, result) => { // Check response status
+                    return response.status === 200 && !result.isError
+                }
+            }),
             transformResponse: responseData => { // Due to usage of _id instead of id property in MongoDB responses
                 const loadedUsers = responseData.map(user => {
                     user.id = user._id // Map _id to id property

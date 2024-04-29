@@ -13,37 +13,50 @@ import NewPost from './features/posts/NewPost'
 import EditPost from './features/posts/EditPost'
 import Prefetch from './features/auth/Prefetch'
 import PersistLogin from './features/auth/PersistLogin'
+import RequireAuth from './features/auth/RequireAuth'
+import { ROLES } from './config/roles'
+import useTitle from './hooks/useTitle'
 
 function App() {
+  useTitle('TuringWise Project')
   return (
     <Routes>
       <Route path='/' element={<Layout />}>
+        {/* Public Routes */}
         <Route index element={<Public />} />
         <Route path='login' element={<Login />} />
 
+        {/* Protected Routes */}
         <Route element={<PersistLogin />}>
-          <Route element={<Prefetch />}>
-            {/* Protected Routes */}
-            {/* TODO: protect these routes */}
-            <Route path='dash' element={<DashLayout />}>
-              <Route index element={<Welcome />} />
+          <Route element={<RequireAuth allowedRoles={[...Object.values(ROLES)]} />}>
+            <Route element={<Prefetch />}>
 
-              <Route path='users'>
-                <Route index element={<UsersList />} />
-                <Route path=':id' element={<EditUser />} />
-                <Route path='new' element={<NewUserForm />} />
+              {/* Start Dash */}
+              <Route path='dash' element={<DashLayout />}>
+                <Route index element={<Welcome />} />
+
+                <Route path='users'>
+                  <Route index element={<UsersList />} />
+                  <Route element={<RequireAuth allowedRoles={[ROLES.OrganisationAdmin, ROLES.Admin]} />}>
+                    <Route path=':id' element={<EditUser />} />
+                    <Route path='new' element={<NewUserForm />} />
+                  </Route>
+                </Route>
+
+                <Route element={<RequireAuth allowedRoles={[ROLES.OrganisationUser, ROLES.OrganisationAdmin, ROLES.Admin]} />}>
+                  <Route path='posts'>
+                    <Route index element={<PostsList />} />
+                    <Route path=':id' element={<EditPost />} />
+                    <Route path='new' element={<NewPost />} />
+                  </Route>
+                </Route>
+
               </Route>
-
-              <Route path='posts'>
-                <Route index element={<PostsList />} />
-                <Route path=':id' element={<EditPost />} />
-                <Route path='new' element={<NewPost />} />
-              </Route>
-
+              {/* End Dash */}
             </Route>
-            {/* End Dash */}
           </Route>
         </Route>
+        {/* End of protected routes */}
 
       </Route>
     </Routes>

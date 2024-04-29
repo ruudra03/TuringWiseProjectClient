@@ -7,18 +7,9 @@ import { postsApiSlice } from '../posts/postsApiSlice'
 
 const Prefetch = () => {
     useEffect(() => {
-        console.log('Suscribing')
-
-        const users = store.dispatch(usersApiSlice.endpoints.getUsers.initiate())
-        const posts = store.dispatch(postsApiSlice.endpoints.getPosts.initiate())
-
-        return () => {
-            console.log('Unsuscribing')
-            users.unsubscribe()
-            posts.unsubscribe()
-        }
+        store.dispatch(postsApiSlice.util.prefetch('getPosts', 'postsList', { force: true }))
+        store.dispatch(usersApiSlice.util.prefetch('getUsers', 'usersList', { force: true }))
     }, [])
-
 
     return <Outlet />
 }

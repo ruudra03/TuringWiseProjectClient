@@ -1,13 +1,16 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSave, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons"
+import { faSave, faTrashCan, faPlus } from '@fortawesome/free-solid-svg-icons'
 
-import { useUpdatePostMutation, useDeletePostMutation } from "./postsApiSlice"
+import { useUpdatePostMutation, useDeletePostMutation } from './postsApiSlice'
+import useAuth from '../../hooks/useAuth'
 
 const TAG_REGEX = /^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/
 
 const EditPostForm = ({ post }) => {
+    const { isOrgUser, isOrgAdmin, isAdmin } = useAuth()
+
     const [updatePost, {
         isLoading: isUpdateLoading,
         isSuccess: isUpdateSuccess,
@@ -79,29 +82,36 @@ const EditPostForm = ({ post }) => {
 
     const errContent = (updateError?.data?.message || deleteError?.data?.message) ?? ''
 
+    let deleteButton = null
+    if (isOrgUser || isOrgAdmin || isAdmin) {
+        deleteButton = (
+            <button
+                className='icon-button'
+                title='Delete'
+                onClick={onDeletePostClicked}
+            >
+                <FontAwesomeIcon icon={faTrashCan} />
+            </button>
+        )
+    }
+
     const content = (
         <>
             <p className={errClass}>{errContent}</p>
 
-            <form className="form" onSubmit={e => e.preventDefault()}>
-                <div className="form__title-row">
+            <form className='form' onSubmit={e => e.preventDefault()}>
+                <div className='form__title-row'>
                     <h2>Edit Post #{post.id}</h2>
-                    <div className="form__action-buttons">
+                    <div className='form__action-buttons'>
                         <button
-                            className="icon-button"
-                            title="Save"
+                            className='icon-button'
+                            title='Save'
                             onClick={onSavePostClicked}
                             disabled={!canSave}
                         >
                             <FontAwesomeIcon icon={faSave} />
                         </button>
-                        <button
-                            className="icon-button"
-                            title="Delete"
-                            onClick={onDeletePostClicked}
-                        >
-                            <FontAwesomeIcon icon={faTrashCan} />
-                        </button>
+                        {deleteButton}
                     </div>
                 </div>
 
@@ -133,7 +143,7 @@ const EditPostForm = ({ post }) => {
                     Add New Tag:</label>
                 <input
                     className={`form__input ${validNewTagClass}`}
-                    id='addNewTag'
+                    id='new-tag'
                     name='addNewTag'
                     type='text'
                     autoComplete='off'
@@ -150,12 +160,12 @@ const EditPostForm = ({ post }) => {
                     <FontAwesomeIcon icon={faPlus} />
                 </button>
 
-                <div className="form__row">
-                    <div className="form__divider">
-                        <p className="form__created">Created:<br />{created}</p>
-                        <p className="form__updated">Updated:<br />{updated}</p>
+                <div className='form__row'>
+                    <div className='form__divider'>
+                        <p className='form__created'>Created:<br />{created}</p>
+                        <p className='form__updated'>Updated:<br />{updated}</p>
                     </div>
-                    <div className="form__divider">
+                    <div className='form__divider'>
                         {post.edited ? <p>Edited</p> : null}
                     </div>
                 </div>

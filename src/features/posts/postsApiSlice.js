@@ -11,10 +11,12 @@ export const postsApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
         // Get all posts API endpoint
         getPosts: builder.query({
-            query: () => '/posts', // Base Query is already provided inside apiSlice
-            validateStatus: (response, result) => { // Check response status
-                return response.status === 200 && !result.isError
-            },
+            query: () => ({
+                url: '/posts', // Base Query is already provided inside apiSlice
+                validateStatus: (response, result) => { // Check response status
+                    return response.status === 200 && !result.isError
+                }
+            }),
             transformResponse: responseData => { // Due to usage of _id instead of id property in MongoDB responses
                 const loadedPosts = responseData.map(post => {
                     post.id = post._id // Map _id to id property

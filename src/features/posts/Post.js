@@ -1,12 +1,16 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { memo } from 'react'
 
-import { selectPostById } from './postsApiSlice'
+import { useGetPostsQuery } from './postsApiSlice'
 
 const Post = ({ postId }) => {
-    const post = useSelector(state => selectPostById(state, postId))
+    const { post } = useGetPostsQuery('postsList', {
+        selectFromResult: ({ data }) => ({
+            post: data?.entities[postId]
+        })
+    })
 
     const navigate = useNavigate()
 
@@ -42,4 +46,6 @@ const Post = ({ postId }) => {
     } else return null
 }
 
-export default Post
+const memoisedPost = memo(Post)
+
+export default memoisedPost

@@ -23,6 +23,7 @@ export const authApiSlice = apiSlice.injectEndpoints({
                     dispatch(logoutAction())
                     // NOTE: using setTimeout() here to wait for the isSuccess state of sendLogout to change before reseting the whole api state
                     setTimeout(() => {
+                        console.log('API state cleared')
                         dispatch(apiSlice.util.resetApiState())
                     }, 1000) // equals to 1sec
                 } catch (err) {

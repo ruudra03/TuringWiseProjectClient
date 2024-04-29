@@ -1,9 +1,14 @@
 import { useGetPostsQuery } from './postsApiSlice'
+import PulseLoader from 'react-spinners/PulseLoader'
 
 import Post from './Post'
+import useAuth from '../../hooks/useAuth'
 
 // TODO: add sorting based on date created
+// TODO: the username for all the post being saved is always set to admin which is an error
 const PostsList = () => {
+    const { username, isOrgAdmin, isAdmin } = useAuth()
+
     const {
         data: posts,
         isLoading,
@@ -18,7 +23,7 @@ const PostsList = () => {
 
     let content
 
-    if (isLoading) content = <p>Loading...</p>
+    if (isLoading) content = <PulseLoader color={'#FFF'} />
 
     if (isError) {
         content = <p className='errmsg'>{error?.data?.message}</p>
@@ -26,11 +31,17 @@ const PostsList = () => {
 
     if (isSuccess) {
         // TODO: add entities
-        const { ids } = posts
+        const { ids, entities } = posts
 
-        const tableContent = ids?.length
-            ? ids.map(postId => <Post key={postId} postId={postId} />)
-            : null
+        // TODO: logic change required here
+        let filteredIds
+        if (isOrgAdmin || isAdmin) {
+            filteredIds = [...ids]
+        } else {
+            filteredIds = ids.filter(postId => entities[postId].username === username)
+        }
+
+        const tableContent = ids?.length && filteredIds.map(postId => <Post key={postId} postId={postId} />)
 
         content = (
             <table className='table table--posts'>
