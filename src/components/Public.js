@@ -8,10 +8,12 @@ const Public = () => {
             </header>
             <main className='public__main'>
                 <p>The project is currently under development.</p>
-                <br />
                 <p>@ruudra</p>
+                <br />
             </main>
             <footer>
+                <Link to='/signup'>Sign up</Link>
+                <br />
                 <Link to='/login'>Login</Link>
             </footer>
         </section>

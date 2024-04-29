@@ -16,6 +16,7 @@ import PersistLogin from './features/auth/PersistLogin'
 import RequireAuth from './features/auth/RequireAuth'
 import { ROLES } from './config/roles'
 import useTitle from './hooks/useTitle'
+import SignUp from './features/users/SignUp'
 
 function App() {
   useTitle('TuringWise Project')
@@ -24,6 +25,7 @@ function App() {
       <Route path='/' element={<Layout />}>
         {/* Public Routes */}
         <Route index element={<Public />} />
+        <Route path='signup' element={<SignUp />} />
         <Route path='login' element={<Login />} />
 
         {/* Protected Routes */}
