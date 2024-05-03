@@ -12,6 +12,7 @@ import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { useSendLogoutMutation } from '../../features/auth/authApiSlice'
 import useAuth from '../../hooks/useAuth'
 
+// TODO: add articles, org card & researches path regexes as needed
 const DASH_REGEX = /^\/dash(\/)?$/
 const POSTS_REGEX = /^\/dash\/posts(\/)?$/
 const USERS_REGEX = /^\/dash\/users(\/)?$/
@@ -39,8 +40,14 @@ const DashHeader = () => {
     }
 
     const onNewUserClicked = () => navigate('/dash/users/new')
+    const onNewArticleClicked = () => navigate('/dash/articles/new')
+    const onNewResearchClicked = () => navigate('/dash/researches/new')
+    const onNewOrgCardClicked = () => navigate('/dash/orgCards/new')
     const onNewPostClicked = () => navigate('/dash/posts/new')
     const onUsersListClicked = () => navigate('/dash/users')
+    const onArticlesListClicked = () => navigate('/dash/articles')
+    const onResearchesListClicked = () => navigate('/dash/researches')
+    const onOrgCardsListClicked = () => navigate('/dash/orgCards')
     const onPostsListClicked = () => navigate('/dash/posts')
 
     let dashClass = null
@@ -56,6 +63,7 @@ const DashHeader = () => {
                 title='New Post'
                 onClick={onNewPostClicked}
             >
+                New Post
                 <FontAwesomeIcon icon={faFileCirclePlus} />
             </button>
         )
@@ -70,10 +78,46 @@ const DashHeader = () => {
                     title='New User'
                     onClick={onNewUserClicked}
                 >
+                    New User
                     <FontAwesomeIcon icon={faUserPlus} />
                 </button>
             )
         }
+    }
+
+    let newArticleButton = null
+    newArticleButton = (
+        <button
+            className='icon-button'
+            title='New User'
+            onClick={onNewArticleClicked}
+        >
+            New Article
+        </button>
+    )
+
+    let newResearchButton = null
+    newResearchButton = (
+        <button
+            className='icon-button'
+            title='New User'
+            onClick={onNewResearchClicked}
+        >
+            New Research
+        </button>
+    )
+
+    let newOrgCardButton = null
+    if (isAdmin) {
+        newOrgCardButton = (
+            <button
+                className='icon-button'
+                title='New User'
+                onClick={onNewOrgCardClicked}
+            >
+                New Organisation Card
+            </button>
+        )
     }
 
     let usersListButton = null
@@ -84,7 +128,43 @@ const DashHeader = () => {
                 title='Users'
                 onClick={onUsersListClicked}
             >
+                Users List
                 <FontAwesomeIcon icon={faUserGear} />
+            </button>
+        )
+    }
+
+    let articlesListButton = null
+    articlesListButton = (
+        <button
+            className='icon-button'
+            title='Users'
+            onClick={onArticlesListClicked}
+        >
+            Articles List
+        </button>
+    )
+
+    let researchesListButton = null
+    researchesListButton = (
+        <button
+            className='icon-button'
+            title='Users'
+            onClick={onResearchesListClicked}
+        >
+            Researches List
+        </button>
+    )
+
+    let orgCardListButton = null
+    if (isOrgAdmin || isAdmin) {
+        orgCardListButton = (
+            <button
+                className='icon-button'
+                title='Users'
+                onClick={onOrgCardsListClicked}
+            >
+                Organisation Cards List
             </button>
         )
     }
@@ -98,6 +178,7 @@ const DashHeader = () => {
                     title='Posts'
                     onClick={onPostsListClicked}
                 >
+                    Posts List
                     <FontAwesomeIcon icon={faFilePen} />
                 </button>
             )
@@ -124,8 +205,14 @@ const DashHeader = () => {
             <>
                 {newPostButton}
                 {newUserButton}
+                {newArticleButton}
+                {newResearchButton}
+                {newOrgCardButton}
                 {postsListButton}
                 {usersListButton}
+                {articlesListButton}
+                {researchesListButton}
+                {orgCardListButton}
                 {logoutButton}
             </>
         )

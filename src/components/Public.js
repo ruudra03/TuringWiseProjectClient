@@ -12,6 +12,10 @@ const Public = () => {
                 <br />
             </main>
             <footer>
+                <Link to='/publicArticles'>Articles</Link>
+                <br />
+                <Link to='/publicResearches'>Researches</Link>
+                <br />
                 <Link to='/signup'>Sign up</Link>
                 <br />
                 <Link to='/login'>Login</Link>
