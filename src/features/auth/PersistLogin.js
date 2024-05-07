@@ -5,7 +5,7 @@ import PulseLoader from 'react-spinners/PulseLoader'
 
 import { useRefreshMutation } from './authApiSlice'
 import usePersist from '../../hooks/usePersist'
-import { selectCurrentToken } from './authSlice'
+import { selectCurrentToken } from '../../app/api/authSlice'
 
 const PersistLogin = () => {
     const [persist] = usePersist()
@@ -63,7 +63,7 @@ const PersistLogin = () => {
         content = (
             <p className='errmsg'>
                 {`${error?.data?.message} - `}
-                <Link to='/login'>Please login again</Link>
+                <Link to='/login'>Login here</Link>
             </p>
         )
     } else if (isSuccess && trueSuccess) { // Token is present (persist: yes, token: yes)

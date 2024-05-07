@@ -2,7 +2,7 @@ import { createSelector, createEntityAdapter } from '@reduxjs/toolkit'
 
 import { apiSlice } from '../../app/api/apiSlice'
 
-// TODO: add post sorting inside createEntityAdapter
+// TODO: add post sorting & also other content sorting inside createEntityAdapter & elsewhere needed
 const postsAdapter = createEntityAdapter({})
 
 const initialState = postsAdapter.getInitialState()
@@ -34,6 +34,7 @@ export const postsApiSlice = apiSlice.injectEndpoints({
                 } else return [{ type: 'Post', id: 'LIST' }] // Fail Safe
             }
         }),
+        // TODO
         // Create New Post
         addNewPost: builder.mutation({
             query: initialPostData => ({

@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import PulseLoader from 'react-spinners/PulseLoader'
 import { useDispatch } from 'react-redux'
 
-import { setCredentials } from './authSlice'
+import { setCredentials } from '../../app/api/authSlice'
 import { useLoginMutation } from './authApiSlice'
 import usePersist from '../../hooks/usePersist'
 

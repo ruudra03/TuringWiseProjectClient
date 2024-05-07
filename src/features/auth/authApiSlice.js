@@ -1,5 +1,5 @@
 import { apiSlice } from '../../app/api/apiSlice'
-import { logoutAction, setCredentials } from './authSlice'
+import { removeCredentials, setCredentials } from '../../app/api/authSlice'
 
 export const authApiSlice = apiSlice.injectEndpoints({
     endpoints: builder => ({
@@ -18,9 +18,11 @@ export const authApiSlice = apiSlice.injectEndpoints({
             // NOTE: using onQueryStarted() to avoid using useDispatch() inside every component when calling this mutation
             async onQueryStarted(arg, { dispatch, queryFulfilled }) {
                 try {
+                    // clear Credentials
                     const { data } = await queryFulfilled
-                    console.log(data)
-                    dispatch(logoutAction())
+                    console.log(data) // returns "Cookies Cleared"
+
+                    dispatch(removeCredentials())
                     // NOTE: using setTimeout() here to wait for the isSuccess state of sendLogout to change before reseting the whole api state
                     setTimeout(() => {
                         console.log('API state cleared')
