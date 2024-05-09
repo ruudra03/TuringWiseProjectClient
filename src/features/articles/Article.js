@@ -1,4 +1,4 @@
-import { useGetArticlesQuery } from "./articlesApiSlice"
+// import { useGetArticlesQuery } from "./articlesApiSlice"
 
 const Article = ({ articleId }) => {
 
